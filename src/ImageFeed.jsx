@@ -15,6 +15,12 @@ function ImageFeed() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [showHeartAnimation, setShowHeartAnimation] = useState(null);
+  const [fileType, setFileType] = useState(null);
+
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
         setSelectedFile(file);
         setFileType(file.type.startsWith('image/') ? 'image' : 'video');
@@ -23,6 +29,15 @@ function ImageFeed() {
       } else {
         alert('Please select a valid image or video file');
       }
+    }
+  };
+
+  // Handle profile pic change
+  const handleProfilePicChange = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProfilePic(reader.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -83,16 +98,64 @@ function ImageFeed() {
       {/* Profile Section */}
       <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
         <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-            U
+          <div className="relative group">
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center overflow-hidden ${!profilePic ? 'bg-gradient-to-r from-blue-500 to-blue-600' : ''}`}>
+              {profilePic ? (
+                <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-white text-2xl font-bold">{username.charAt(0).toUpperCase()}</span>
+              )}
+            </div>
+            {isEditingProfile && (
+              <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer group-hover:opacity-100 opacity-0 transition-opacity">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleProfilePicChange(e.target.files[0])}
+                />
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </label>
+            )}
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Username</h2>
-            <p className="text-gray-600">Bio description goes here</p>
-            <div className="flex space-x-4 mt-2">
-              <span className="text-gray-900"><strong>{posts.length}</strong> posts</span>
-              <span className="text-gray-900"><strong>0</strong> followers</span>
-              <span className="text-gray-900"><strong>0</strong> following</span>
+          <div className="flex-1">
+            {isEditingProfile ? (
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full p-2 border rounded-lg text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="Username"
+                />
+                <textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  className="w-full p-2 border rounded-lg text-gray-600 resize-none h-20 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="Bio"
+                />
+              </div>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold text-gray-900">{username}</h2>
+                <p className="text-gray-600">{bio}</p>
+              </>
+            )}
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex space-x-4">
+                <span className="text-gray-900"><strong>{posts.length}</strong> posts</span>
+                <span className="text-gray-900"><strong>0</strong> followers</span>
+                <span className="text-gray-900"><strong>0</strong> following</span>
+              </div>
+              <button
+                onClick={() => setIsEditingProfile(!isEditingProfile)}
+                className="px-4 py-2 text-sm font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                {isEditingProfile ? 'Save Profile' : 'Edit Profile'}
+              </button>
             </div>
           </div>
         </div>
@@ -167,9 +230,9 @@ function ImageFeed() {
             <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  U
+                  {username.charAt(0).toUpperCase()}
                 </div>
-                <span className="font-semibold text-gray-900">Username</span>
+                <span className="font-semibold text-gray-900">{username}</span>
               </div>
             </div>
             
@@ -211,7 +274,7 @@ function ImageFeed() {
               </button>
               <p className="font-semibold mb-2 text-gray-900">{post.likes} likes</p>
               <p className="text-gray-800 text-[15px]">
-                <span className="font-semibold mr-2">Username</span>
+                <span className="font-semibold mr-2">{username}</span>
                 {post.caption}
               </p>
             </div>
