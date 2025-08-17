@@ -59,18 +59,48 @@ app.post('/api/auth/signup', validateInput, async (req, res) => {
       email,
       username,
       password: hashedPassword
+    };
+    users.push(user);
+
+    // Generate token
+    const token = jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, {
+      expiresIn: '24h'
+    });
+
+    res.status(201).json({
+      token,
+      user: { id: user.id, email: user.email, username: user.username }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating user' });
+  }
+});
+
+// Login endpoint
+app.post('/api/auth/login', validateInput, async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Find user
+    const user = users.find(u => u.email === email);
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Check password
+    const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Generate token
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, {
       expiresIn: '24h'
     });
 
     res.json({
       token,
-      user: { id: user.id, email: user.email }
+      user: { id: user.id, email: user.email, username: user.username }
     });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in' });

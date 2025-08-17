@@ -12,7 +12,8 @@ export const authService = {
       });
       
       if (!response.ok) {
-        throw new Error('Login failed');
+        const error = await response.json();
+        throw new Error(error.message || 'Login failed');
       }
 
       const data = await response.json();
@@ -26,18 +27,19 @@ export const authService = {
     }
   },
 
-  signup: async (email, password) => {
+  signup: async (email, password, username) => {
     try {
       const response = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, username }),
       });
 
       if (!response.ok) {
-        throw new Error('Signup failed');
+        const error = await response.json();
+        throw new Error(error.message || 'Signup failed');
       }
 
       const data = await response.json();
