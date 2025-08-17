@@ -3,9 +3,11 @@ services:
     name: giantogram-tiktok-frontend
     env: static
     buildCommand: |
-      cd frontend && 
-      npm ci &&
-      npx vite build
+      cd frontend &&
+      rm -rf node_modules &&
+      npm cache clean --force &&
+      npm install &&
+      NODE_ENV=production npx vite build
     staticPublishPath: frontend/build
     headers:
       - path: /*
