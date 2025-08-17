@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "vite preview --port 80"
+    "start": "serve -s build -l 80"
   },
   "dependencies": {
     "firebase": "^12.1.0",
