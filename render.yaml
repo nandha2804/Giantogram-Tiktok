@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: giantogram-tiktok-frontend
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm run start
+    staticPublishPath: ./frontend/dist

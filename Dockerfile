@@ -32,7 +32,7 @@ RUN rm -rf ./*
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy static assets from builder stage
-COPY --from=builder /app/dist .
+COPY --from=builder /app/build .
 
 # Expose port 80
 EXPOSE 80
