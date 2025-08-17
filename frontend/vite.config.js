@@ -5,6 +5,24 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'build', // Change output directory from dist to build
+    outDir: 'build',
+  },
+  server: {
+    port: 3000,
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'https://giantogram-tiktok.onrender.com',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
+  preview: {
+    port: 80,
+    host: true
+  },
+  define: {
+    'process.env.VITE_API_URL': JSON.stringify('https://giantogram-tiktok.onrender.com')
   }
 })
