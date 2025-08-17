@@ -107,6 +107,44 @@ app.post('/api/auth/login', validateInput, async (req, res) => {
   }
 });
 
+// Update profile endpoint
+app.put('/api/auth/profile', authenticateToken, async (req, res) => {
+  try {
+    const { username, email, bio } = req.body;
+    const userId = req.user.id;
+
+    // Find and update user
+    const user = users.find(u => u.id === userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if username is taken by another user
+    if (username !== user.username && users.find(u => u.username === username)) {
+      return res.status(400).json({ message: 'Username already taken' });
+    }
+
+    // Update user information
+    user.username = username;
+    user.email = email;
+    user.bio = bio;
+
+    // Generate new token with updated info
+    const token = jwt.sign(
+      { id: user.id, email: user.email, username: user.username },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      token,
+      user: { id: user.id, email: user.email, username: user.username, bio: user.bio }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating profile' });
+  }
+});
+
 // Protected route example
 app.get('/api/protected', authenticateToken, (req, res) => {
   res.json({ message: 'Protected route accessed successfully', user: req.user });

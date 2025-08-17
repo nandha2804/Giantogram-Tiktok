@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import authService from '../services/authService';
 
 export default function EditProfile() {
   const { user } = useAuth();
@@ -17,11 +18,10 @@ export default function EditProfile() {
     setLoading(true);
 
     try {
-      // Profile update functionality will be implemented later
-      // For now, just navigate back to profile
+      await authService.updateProfile(username, email, bio);
       navigate('/profile');
     } catch (error) {
-      setError('Failed to update profile');
+      setError(error.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }

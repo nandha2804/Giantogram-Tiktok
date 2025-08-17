@@ -147,8 +147,20 @@ function VideoFeed() {
     alert('Share functionality would go here!');
   };
 
+  const handleNewPost = () => {
+    // Will be implemented later
+    alert('Upload new video functionality coming soon!');
+  };
+
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black relative">
+      {/* New Post Button */}
+      <button
+        onClick={handleNewPost}
+        className="fixed top-4 right-4 z-50 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors duration-200"
+      >
+        <span className="text-2xl font-bold">+</span>
+      </button>
       {posts.map(post => (
         <div 
           key={post.id} 
@@ -156,10 +168,13 @@ function VideoFeed() {
           onDoubleClick={() => handleDoubleClick(post.id)}
         >
           {/* Image */}
-          <img
-            src={post.image}
-            alt={post.caption}
-            className="w-full h-full object-cover"
+          <video
+            ref={el => videoRefs.current[post.id] = el}
+            className="feed-video w-full h-full object-cover"
+            src={`${window.location.origin}/video/sample.mp4`}
+            loop
+            muted
+            playsInline
           />
 
           {/* Heart Animation Overlay */}
