@@ -183,7 +183,7 @@ export default function VideoFeed() {
             <video
               ref={el => videoRefs.current[post.id] = el}
               className="feed-video w-full h-full object-cover"
-              src={`http://localhost:8000${post.fileUrl}`}
+              src={post.fileUrl}
               loop
               muted
               playsInline
