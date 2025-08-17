@@ -8,7 +8,6 @@ export default function UserMenu() {
   const navigate = useNavigate();
   const menuRef = useRef();
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -47,11 +46,11 @@ export default function UserMenu() {
           <button
             onClick={() => {
               setIsOpen(false);
-              navigate('/profile/edit');
+              navigate('/profile');
             }}
             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
           >
-            Edit Profile
+            View Profile
           </button>
           <button
             onClick={handleLogout}

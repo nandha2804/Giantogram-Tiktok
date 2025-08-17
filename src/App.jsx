@@ -6,6 +6,7 @@ import Signup from './components/Signup';
 import ImageFeed from './ImageFeed';
 import VideoFeed from './VideoFeed';
 import Navigation from './components/Navigation';
+import UserProfile from './components/UserProfile';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -18,7 +19,7 @@ const AuthenticatedLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>
@@ -63,17 +64,14 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-
+      
       {/* Profile Routes */}
       <Route
-        path="/profile/edit"
+        path="/profile"
         element={
           <ProtectedRoute>
             <AuthenticatedLayout>
-              <div className="max-w-2xl mx-auto">
-                <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-                <p className="text-gray-600">Profile editing feature coming soon...</p>
-              </div>
+              <UserProfile />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }
