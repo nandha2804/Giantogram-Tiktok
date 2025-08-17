@@ -29,7 +29,7 @@ COPY . .
 # Set environment variables
 ENV NODE_ENV=production
 ENV PORT=8000
-ENV JWT_SECRET=change_this_in_production
+ENV JWT_SECRET=jnndnjsdjdnj@njnjnjnj15d5fdfekfm7asjdwd5w6d
 
 # Switch to non-root user
 USER node
