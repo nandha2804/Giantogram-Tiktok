@@ -7,6 +7,7 @@ import ImageFeed from './ImageFeed';
 import VideoFeed from './VideoFeed';
 import Navigation from './components/Navigation';
 import UserProfile from './components/UserProfile';
+import EditProfile from './components/EditProfile';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -72,6 +73,17 @@ export default function App() {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <UserProfile />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile/edit"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <EditProfile />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }
