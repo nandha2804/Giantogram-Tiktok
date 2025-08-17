@@ -14,7 +14,8 @@ export default defineConfig({
       '/api': {
         target: 'https://giantogram-tiktok.onrender.com',
         changeOrigin: true,
-        secure: false
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },
@@ -23,6 +24,7 @@ export default defineConfig({
     host: true
   },
   define: {
-    'process.env.VITE_API_URL': JSON.stringify('https://giantogram-tiktok.onrender.com')
+    'process.env.VITE_API_URL': JSON.stringify('https://giantogram-tiktok.onrender.com'),
+    'process.env.FRONTEND_URL': JSON.stringify('https://giantogram-tiktok-1.onrender.com')
   }
 })
