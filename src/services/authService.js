@@ -88,11 +88,17 @@ export const authService = {
       }
 
       const data = await response.json();
+      // Make sure we save the complete user object including bio
+      const updatedUser = {
+        ...data.user,
+        bio // Ensure bio is included in localStorage
+      };
+      
       if (data.token) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify(updatedUser));
       }
-      return data;
+      return { ...data, user: updatedUser };
     } catch (error) {
       throw error;
     }

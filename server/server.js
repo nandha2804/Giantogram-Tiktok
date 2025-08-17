@@ -2,13 +2,42 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only images and videos are allowed.'));
+    }
+  },
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 // In-memory user storage (replace with database in production)
 const users = [];
+const posts = [];
 const JWT_SECRET = 'your-secret-key'; // Use environment variable in production
 
 // Input validation middleware
@@ -167,6 +196,62 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+
+// Post endpoints
+app.post('/api/posts', authenticateToken, upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const { caption, hashtags, location } = req.body;
+    const fileUrl = `/uploads/${req.file.filename}`;
+    const fileType = req.file.mimetype.startsWith('image/') ? 'image' : 'video';
+    
+    const post = {
+      id: posts.length + 1,
+      userId: req.user.id,
+      username: req.user.username,
+      fileUrl,
+      fileType,
+      caption,
+      hashtags: hashtags ? hashtags.split(',').map(tag => tag.trim()) : [],
+      location,
+      likes: 0,
+      comments: [],
+      createdAt: new Date().toISOString()
+    };
+    
+    posts.push(post);
+    res.status(201).json({ post });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating post' });
+  }
+});
+
+// Get all posts
+app.get('/api/posts', authenticateToken, (req, res) => {
+  try {
+    res.json({ posts });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
+
+// Get user's posts
+app.get('/api/posts/user/:userId', authenticateToken, (req, res) => {
+  try {
+    const userPosts = posts
+      .filter(post => post.userId === parseInt(req.params.userId))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by newest first
+    res.json({ 
+      posts: userPosts,
+      totalPosts: userPosts.length
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user posts' });
+  }
+});
 
 const PORT = 8000;
 app.listen(PORT, () => {

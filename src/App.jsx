@@ -3,8 +3,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import ImageFeed from './ImageFeed';
-import VideoFeed from './VideoFeed';
+import ImageFeed from './components/ImageFeed';
+import VideoFeed from './components/VideoFeed';
+import CreatePost from './components/CreatePost';
 import Navigation from './components/Navigation';
 import UserProfile from './components/UserProfile';
 import EditProfile from './components/EditProfile';
@@ -35,6 +36,16 @@ export default function App() {
       <Route path="/signup" element={<Signup />} />
 
       {/* Protected Routes */}
+      <Route
+        path="/create-post"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <CreatePost />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/"
         element={

@@ -50,11 +50,22 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateProfile = async (username, email, bio) => {
+    try {
+      const response = await authService.updateProfile(username, email, bio);
+      setUser(response.user);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
     login,
     signup,
     logout,
+    updateProfile,
     isAuthenticated: authService.isAuthenticated
   };
 
